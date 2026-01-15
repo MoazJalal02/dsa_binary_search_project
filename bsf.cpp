@@ -16,10 +16,17 @@ struct TreeNode
     TreeNode *right;
 
     // New fields for Part B
-    double assignmentMark; // Component Mark 1
-    double examMark;       // Component Mark 2
     double totalMark;      // Calculated Total
     char grade;            // Calculated Grade
+    
+    // Add missing assessment fields
+    double quiz;
+    double assignment;
+    double test1;
+    double labTest;
+    double project;
+    double exercise;
+    double finalExam;
 };
 
 // =====================
@@ -34,18 +41,22 @@ public:
     bool IsEmpty() const;
     int NumberOfNodes() const;
 
-    void RetrieveItem(string &item, bool &found);
+    // MOAZ - Part A: Insert node
+    void InsertItem(string studname, double quiz, double assign, double test1, double lab, double proj, double exc, double exam);
 
-    // Othman: Updated to accept marks for Part B
-    void InsertItem(string item, double assign, double exam);
-
-    void DeleteItem(string item);
+    
     void PrintTree() const;
-
+    
     // Othman: Public traversal wrappers
     void PrintInOrder() const;
     void PrintPreOrder() const;
     void PrintPostOrder() const;
+    
+    // MOAZ - Part C : Search Student by name
+    void SearchStudent(string name) const;
+    
+    // SHIMAA - Part D: Delete node
+    void DeleteItem(string studname);
 
     // Mathaba - Part E : Statistics
     void PrintStatistics() const;
@@ -58,10 +69,9 @@ private:
     void Destroy(TreeNode *&tree);
     int CountNodes(TreeNode *tree) const;
 
-    // Othman:  New Prototype to matche new implementation
-    void Insert(TreeNode *&tree, string name, double assign, double exam);
+    // MOAZ - Part A:  Insert node
+    void Insert(TreeNode *&tree, string name, double quiz, double assign, double test1, double lab, double proj, double exc, double exam);
 
-    void Retrieve(TreeNode *tree, string &item, bool &found) const;
     void Delete(TreeNode *&tree, string item);
     void DeleteNode(TreeNode *&tree);
     // SHIMAA : Change the fuction to Return full predecessor node
@@ -75,6 +85,9 @@ private:
     void InOrder(TreeNode *tree) const;
     void PreOrder(TreeNode *tree) const;
     void PostOrder(TreeNode *tree) const;
+
+    // MOAZ - Part C: helper function for searching
+    void Search(TreeNode* tree, string name) const; 
 
     // Mathaba: Part E helper struct to hold stats
     struct Stats
@@ -144,14 +157,9 @@ int TreeType::NumberOfNodes() const
     return CountNodes(root);
 }
 
-void TreeType::InsertItem(string item, double assign, double exam)
+void TreeType:: InsertItem(string studentName, double quiz, double assign, double test1, double lab, double proj, double exc, double exam)
 {
-    Insert(root, item, assign, exam);
-}
-
-void TreeType::RetrieveItem(string &item, bool &found)
-{
-    Retrieve(root, item, found);
+    Insert(root, studentName, quiz, assign, test1, lab, proj, exc, exam);
 }
 
 void TreeType::DeleteItem(string item)
@@ -191,62 +199,41 @@ int TreeType::CountNodes(TreeNode *tree) const
     return 1 + CountNodes(tree->left) + CountNodes(tree->right);
 }
 
-/* * Othman: 3. UPDATED INSERT LOGIC FOR PART B
- * Calculations for Total Mark and Grade must happen here.
- */
-void TreeType::Insert(TreeNode *&tree, string name, double assign, double exam)
+/* MOAZ - Part A: */
+void TreeType::Insert(TreeNode *&tree, string name, double quiz, double assign, double test1, double lab, double proj, double exc, double exam)
 {
     if (tree == nullptr)
     {
-        // Create new node with all record details
         tree = new TreeNode;
         tree->studname = name;
-        tree->assignmentMark = assign;
-        tree->examMark = exam;
+        
+        // Save all marks
+        tree->quiz = quiz;
+        tree->assignment = assign;
+        tree->test1 = test1;
+        tree->labTest = lab;
+        tree->project = proj;
+        tree->exercise = exc;
+        tree->finalExam = exam;
 
-        // Requirement: Compute Total Mark
-        tree->totalMark = assign + exam;
+        // Calculate Total correctly (Sum of all components)
+        tree->totalMark = quiz + assign + test1 + lab + proj + exc + exam;
 
-        // Requirement: Compute Grade based on total
-        if (tree->totalMark >= 80)
-            tree->grade = 'A';
-        else if (tree->totalMark >= 65)
-            tree->grade = 'B';
-        else if (tree->totalMark >= 50)
-            tree->grade = 'C';
-        else if (tree->totalMark >= 40)
-            tree->grade = 'D';
-        else
-            tree->grade = 'F';
+        // Grade Logic (Same as before)
+        if (tree->totalMark >= 80) tree->grade = 'A';
+        else if (tree->totalMark >= 65) tree->grade = 'B';
+        else if (tree->totalMark >= 50) tree->grade = 'C';
+        else if (tree->totalMark >= 40) tree->grade = 'D';
+        else tree->grade = 'F';
 
         tree->left = nullptr;
         tree->right = nullptr;
     }
     // Navigation logic (alphabetical)
-    else if (name < tree->studname)
-        Insert(tree->left, name, assign, exam);
-    else if (name > tree->studname)
-        Insert(tree->right, name, assign, exam);
-    else
-        cout << "Duplicate name not allowed: " << name << endl;
-}
-
-void TreeType::Retrieve(TreeNode *tree, string &item, bool &found) const
-{
-    if (tree == nullptr)
-    {
-        found = false;
-        return;
-    }
-    if (item < tree->studname)
-        Retrieve(tree->left, item, found);
-    else if (item > tree->studname)
-        Retrieve(tree->right, item, found);
-    else
-    {
-        found = true;
-        item = tree->studname;
-    }
+    else if (name <= tree->studname)
+        Insert(tree->left, name, quiz, assign, test1, lab, proj, exc, exam);
+    else 
+        Insert(tree->right, name, quiz, assign, test1, lab, proj, exc, exam);
 }
 
 void TreeType::Delete(TreeNode *&tree, string item)
@@ -291,8 +278,8 @@ void TreeType::DeleteNode(TreeNode *&tree)
 
         // SHIMAA :// Copy entire student record to keep name, marks, total, and grade consistent after deletion
         tree->studname = predecessor->studname;
-        tree->assignmentMark = predecessor->assignmentMark;
-        tree->examMark = predecessor->examMark;
+        tree->assignment = predecessor->assignment;
+        tree->finalExam = predecessor->finalExam;
         tree->totalMark = predecessor->totalMark;
         tree->grade = predecessor->grade;
 
@@ -331,8 +318,8 @@ void TreeType::DisplayRecord(TreeNode *tree) const
         return;
     cout << "-----------------------------------" << endl;
     cout << "Student Name: " << tree->studname << endl;
-    cout << "Assignment:   " << tree->assignmentMark << endl;
-    cout << "Exam Mark:    " << tree->examMark << endl;
+    cout << "Assignment:   " << tree->assignment << endl;
+    cout << "Exam Mark:    " << tree->finalExam << endl;
     cout << "Total Mark:   " << tree->totalMark << endl;
     cout << "Grade:        " << tree->grade << endl;
 }
@@ -394,6 +381,33 @@ void TreeType::PrintPostOrder() const
         cout << "Tree is empty." << endl;
     else
         PostOrder(root);
+}
+
+// =====================================
+// MOAZ - PART C: SEARCH STUDENT BY NAME
+// =====================================
+
+void TreeType::SearchStudent(string name) const {
+    Search(root, name);
+}
+
+void TreeType::Search(TreeNode* tree, string name) const {
+    if (tree == nullptr) {
+        cout << "Student '" << name << "' was not found in the records." << endl;
+        return;
+    }
+
+    if (name == tree->studname) {
+        cout << "\n=== RECORD FOUND ===" << endl;
+        DisplayRecord(tree); 
+        cout << "====================" << endl;
+    }
+    else if (name < tree->studname) {
+        Search(tree->left, name);
+    }
+    else {
+        Search(tree->right, name);
+    }
 }
 
 // =====================
@@ -514,12 +528,12 @@ int main()
     bool found;
     string name;
 
-    // FIXED: Updated calls to include marks (Name, Assignment, Exam)
-    bst.InsertItem("Ali", 30, 35);   // Total 65 (B)
-    bst.InsertItem("Siti", 40, 45);  // Total 85 (A)
-    bst.InsertItem("Muthu", 35, 40); // Total 75 (B)
-    bst.InsertItem("Ahmad", 25, 25); // Total 50 (C)
-    bst.InsertItem("John", 10, 20);  // Total 30 (F)
+    // Node insertion for testing
+    bst.InsertItem("Ali", 6.5, 6.5, 13.0, 10.0, 6.5, 3.0, 19.5); // Total ~65 (B)
+    bst.InsertItem("Siti", 8.5, 8.5, 17.0, 13.0, 8.5, 4.0, 25.5); // Total ~85 (A)
+    bst.InsertItem("Muthu", 7.5, 7.5, 15.0, 11.0, 7.5, 3.5, 23.0); // Total ~75 (B)
+    bst.InsertItem("Ahmad", 5.0, 5.0, 10.0, 7.5, 5.0, 2.5, 15.0); // Total ~50 (C)
+    bst.InsertItem("John", 3.0, 3.0, 6.0, 4.5, 3.0, 1.5, 9.0); // Total ~30 (F)
     
     // Part E START
     // Mathaba: Part E: statistics after insertion
@@ -543,9 +557,9 @@ int main()
     // Othman:  end of part B
     cout << "Total nodes: " << bst.NumberOfNodes() << endl;
 
+    // MOAZ - PART C: 
     name = "Muthu";
-    bst.RetrieveItem(name, found);
-    cout << "Search Muthu: " << (found ? "FOUND" : "NOT FOUND") << endl;
+    bst.SearchStudent(name);
     // testing for part D : SHIMAA
     cout << "Deleting Ahmad...\n";
     bst.DeleteItem("Ahmad");
