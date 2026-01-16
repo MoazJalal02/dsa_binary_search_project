@@ -314,14 +314,19 @@ void TreeType::PrintInOrderOnlyName(TreeNode *tree) const
 // Othman: Added Helper function to display a single record in the required format
 void TreeType::DisplayRecord(TreeNode *tree) const
 {
-    if (tree == nullptr)
+if (tree == nullptr)
         return;
     cout << "-----------------------------------" << endl;
-    cout << "Student Name: " << tree->studname << endl;
-    cout << "Assignment:   " << tree->assignment << endl;
-    cout << "Exam Mark:    " << tree->finalExam << endl;
-    cout << "Total Mark:   " << tree->totalMark << endl;
-    cout << "Grade:        " << tree->grade << endl;
+    cout << "Student Name: " << tree->studname << endl; 
+    cout << "Quiz (10%):    " << tree->quiz << endl;
+    cout << "Assignment(10%): " << tree->assignment << endl;
+    cout << "Test 1 (20%):  " << tree->test1 << endl;
+    cout << "Lab Test (15%):" << tree->labTest << endl;
+    cout << "Project (10%): " << tree->project << endl;
+    cout << "Exercise (5%): " << tree->exercise << endl;
+    cout << "Final Exam(30%): " << tree->finalExam << endl;
+    cout << "Total Mark:    " << tree->totalMark << endl;
+    cout << "Grade:         " << tree->grade << endl;
 }
 
 // Othman Requirement: Inorder traversal (Sorted alphabetically by name)
@@ -525,55 +530,149 @@ void TreeType::PrintStatistics() const
 int main()
 {
     TreeType bst;
-    bool found;
+    int choice;
     string name;
 
-    // Node insertion for testing
-    bst.InsertItem("Ali", 6.5, 6.5, 13.0, 10.0, 6.5, 3.0, 19.5); // Total ~65 (B)
-    bst.InsertItem("Siti", 8.5, 8.5, 17.0, 13.0, 8.5, 4.0, 25.5); // Total ~85 (A)
-    bst.InsertItem("Muthu", 7.5, 7.5, 15.0, 11.0, 7.5, 3.5, 23.0); // Total ~75 (B)
-    bst.InsertItem("Ahmad", 5.0, 5.0, 10.0, 7.5, 5.0, 2.5, 15.0); // Total ~50 (C)
-    bst.InsertItem("John", 3.0, 3.0, 6.0, 4.5, 3.0, 1.5, 9.0); // Total ~30 (F)
-    
-    // Part E START
-    // Mathaba: Part E: statistics after insertion
-    // Print stats after inserting students so we can see the summary clearly
-    cout << "\n=== CLASS STATISTICS (BEFORE DELETION) ===" << endl;
-    bst.PrintStatistics();
-    // Part E end
+    // Variables for user input
+    double quiz, assign, test1, lab, proj, exc, exam;
 
-    // testing for part B: Othman
-    cout << "=== INORDER TRAVERSAL (Sorted Alphabetically) ===" << endl;
-    bst.PrintInOrder();
+    do {
+        // Menu System as required by the project details
+        cout << "\n=== Student Record Management System ===\n";
+        cout << "1. Insert student record\n";
+        cout << "2. Display students (Inorder)\n";
+        cout << "3. Display students (Preorder)\n";
+        cout << "4. Display students (Postorder)\n";
+        cout << "5. Search student by name\n";
+        cout << "6. Delete student by name\n";
+        cout << "7. Load Live Demo Data (50 records)\n"; // Added for 
+        cout << "8. Class statistics\n";
+        cout << "0. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
 
-    cout << "\n=== PREORDER TRAVERSAL ===" << endl;
-    bst.PrintPreOrder();
+        switch (choice) {
+        case 1:
+            // Part A: Input student record 
+            cout << "Enter Name: ";
+            cin.ignore();
+            getline(cin, name); 
+            cout << "Enter Quiz (10): "; cin >> quiz;
+            cout << "Enter Assignment (10): "; cin >> assign;
+            cout << "Enter Test 1 (20): "; cin >> test1;
+            cout << "Enter Lab Test (15): "; cin >> lab;
+            cout << "Enter Project (10): "; cin >> proj;
+            cout << "Enter Exercise (5): "; cin >> exc;
+            cout << "Enter Final Exam (30): "; cin >> exam;
 
-    cout << "\n=== POSTORDER TRAVERSAL ===" << endl;
-    bst.PrintPostOrder();
+            bst.InsertItem(name, quiz, assign, test1, lab, proj, exc, exam);
+            cout << "Record inserted.\n";
+            break;
 
-    cout << "\n=== Original Simple Print ===" << endl;
-    bst.PrintTree();
-    // Othman:  end of part B
-    cout << "Total nodes: " << bst.NumberOfNodes() << endl;
+        case 2:
+            // Part B: Inorder 
+            cout << "\n=== INORDER TRAVERSAL ===\n";
+            bst.PrintInOrder();
+            break;
 
-    // MOAZ - PART C: 
-    name = "Muthu";
-    bst.SearchStudent(name);
-    // testing for part D : SHIMAA
-    cout << "Deleting Ahmad...\n";
-    bst.DeleteItem("Ahmad");
+        case 3:
+            // Part B: Preorder 
+            cout << "\n=== PREORDER TRAVERSAL ===\n";
+            bst.PrintPreOrder();
+            break;
 
-    cout << "After deletion: ";
+        case 4:
+            // Part B: Postorder 
+            cout << "\n=== POSTORDER TRAVERSAL ===\n";
+            bst.PrintPostOrder();
+            break;
 
-    bst.PrintTree();
-    
-    // END OF PART D
+        case 5:
+            // Part C: Search 
+            cout << "Enter Name to Search: ";
+            cin.ignore();
+            getline(cin, name);
+            bst.SearchStudent(name);
+            break;
 
-    // Mathaba: Part E START
-    cout << "\n=== CLASS STATISTICS (AFTER DELETION) ===" << endl;
-    bst.PrintStatistics();
-    // Mathaba Part E END
+        case 6:
+            // Part D: Delete 
+            cout << "Enter Name to Delete: ";
+            cin.ignore();
+            getline(cin, name);
+            bst.DeleteItem(name);
+            cout << "Delete operation completed.\n";
+            break;
+
+        case 7:
+            // 50 Live Demo Records
+            bst.InsertItem("Adam", 8.0, 7.5, 14.0, 12.0, 7.0, 4.0, 22.0);
+            bst.InsertItem("Aisha", 9.5, 9.0, 18.0, 14.0, 9.0, 5.0, 28.0);
+            bst.InsertItem("Ben", 6.0, 6.0, 10.0, 9.0, 6.0, 3.0, 15.0);
+            bst.InsertItem("Brian", 7.5, 8.0, 13.0, 11.0, 7.5, 4.0, 20.0);
+            bst.InsertItem("Catherine", 9.0, 8.5, 17.0, 13.5, 8.5, 4.5, 26.0);
+            bst.InsertItem("Chen", 5.5, 6.0, 11.0, 8.0, 5.0, 3.0, 16.0);
+            bst.InsertItem("Clara", 8.5, 9.0, 16.0, 13.0, 8.0, 4.0, 24.0);
+            bst.InsertItem("Daniel", 4.0, 5.0, 8.0, 6.0, 4.0, 2.0, 10.0);
+            bst.InsertItem("David", 7.0, 7.5, 14.5, 10.0, 7.0, 3.5, 21.0);
+            bst.InsertItem("Diana", 9.5, 9.5, 19.0, 14.5, 9.5, 5.0, 29.0);
+            bst.InsertItem("Edward", 6.5, 6.5, 12.0, 9.5, 6.0, 3.0, 18.0);
+            bst.InsertItem("Elena", 8.0, 8.5, 15.5, 12.5, 8.0, 4.0, 23.0);
+            bst.InsertItem("Farah", 9.0, 9.0, 17.5, 14.0, 9.0, 4.5, 27.0);
+            bst.InsertItem("Frank", 5.0, 5.5, 9.0, 7.5, 5.0, 2.5, 14.0);
+            bst.InsertItem("George", 7.5, 7.0, 13.5, 11.5, 7.5, 3.5, 20.5);
+            bst.InsertItem("Gina", 8.5, 8.0, 16.5, 13.0, 8.5, 4.0, 25.0);
+            bst.InsertItem("Hassan", 6.0, 6.5, 11.5, 9.0, 6.5, 3.0, 17.0);
+            bst.InsertItem("Helen", 9.5, 9.0, 18.5, 14.5, 9.5, 5.0, 28.5);
+            bst.InsertItem("Ian", 4.5, 5.0, 8.5, 6.5, 4.5, 2.0, 12.0);
+            bst.InsertItem("Irene", 7.0, 7.5, 14.0, 10.5, 7.0, 3.5, 22.0);
+            bst.InsertItem("Jack", 8.0, 8.0, 15.0, 12.0, 8.0, 4.0, 24.0);
+            bst.InsertItem("Jenny", 9.0, 9.5, 19.0, 14.0, 9.0, 4.5, 29.0);
+            bst.InsertItem("Kevin", 5.5, 6.0, 10.5, 8.5, 5.5, 2.5, 15.5);
+            bst.InsertItem("Kim", 7.5, 8.0, 13.0, 11.0, 7.5, 4.0, 19.5);
+            bst.InsertItem("Larry", 6.5, 7.0, 12.5, 10.0, 6.5, 3.5, 18.5);
+            bst.InsertItem("Lily", 9.5, 9.5, 20.0, 15.0, 10.0, 5.0, 30.0);
+            bst.InsertItem("Mike", 3.0, 4.0, 7.0, 5.0, 3.0, 1.5, 8.0);
+            bst.InsertItem("Mina", 8.5, 8.5, 16.0, 13.5, 8.5, 4.5, 26.5);
+            bst.InsertItem("Nancy", 7.0, 7.5, 14.5, 11.5, 7.0, 3.5, 21.5);
+            bst.InsertItem("Nick", 5.0, 5.5, 9.5, 7.0, 5.0, 2.5, 13.0);
+            bst.InsertItem("Omar", 9.0, 9.0, 18.0, 14.0, 9.0, 5.0, 27.5);
+            bst.InsertItem("Olivia", 8.0, 8.5, 15.5, 12.5, 8.0, 4.0, 23.5);
+            bst.InsertItem("Peter", 6.0, 6.0, 11.0, 9.5, 6.0, 3.0, 16.5);
+            bst.InsertItem("Paul", 7.5, 7.0, 13.5, 10.5, 7.5, 3.5, 20.0);
+            bst.InsertItem("Quinn", 9.5, 9.0, 19.0, 14.5, 9.5, 5.0, 28.0);
+            bst.InsertItem("Rachel", 8.5, 8.0, 16.5, 13.0, 8.5, 4.5, 25.5);
+            bst.InsertItem("Ray", 4.5, 5.0, 8.0, 6.0, 4.5, 2.0, 11.0);
+            bst.InsertItem("Sam", 7.0, 7.5, 14.0, 11.0, 7.0, 3.5, 22.5);
+            bst.InsertItem("Sarah", 9.0, 9.5, 18.5, 14.0, 9.0, 5.0, 29.0);
+            bst.InsertItem("Tom", 5.5, 6.0, 10.0, 8.5, 5.5, 3.0, 15.0);
+            bst.InsertItem("Tina", 8.0, 8.5, 15.0, 12.0, 8.0, 4.0, 24.5);
+            bst.InsertItem("Uma", 6.5, 7.0, 12.5, 10.0, 6.5, 3.5, 19.0);
+            bst.InsertItem("Victor", 9.5, 9.0, 19.5, 14.5, 9.5, 5.0, 29.5);
+            bst.InsertItem("Wendy", 7.5, 8.0, 13.0, 11.5, 7.5, 4.0, 21.0);
+            bst.InsertItem("Xavier", 5.0, 5.5, 9.0, 7.5, 5.0, 2.5, 14.5);
+            bst.InsertItem("Yara", 8.5, 9.0, 17.0, 13.5, 8.5, 4.5, 26.0);
+            bst.InsertItem("Yusuf", 6.0, 6.5, 11.5, 9.0, 6.0, 3.0, 17.5);
+            bst.InsertItem("Zach", 9.0, 9.5, 18.0, 14.0, 9.0, 5.0, 28.5);
+            bst.InsertItem("Zoe", 7.0, 7.5, 14.5, 11.0, 7.0, 3.5, 23.0);
+            bst.InsertItem("Zara", 8.0, 8.5, 15.5, 12.5, 8.0, 4.0, 25.0);
+            cout << "Demo data loaded.\n";
+            break;
+
+        case 8:
+            // Part E: Statistics 
+            bst.PrintStatistics();
+            break;
+
+        case 0:
+            cout << "Exiting program...\n";
+            break;
+
+        default:
+            cout << "Invalid choice. Please try again.\n";
+        }
+
+    } while (choice != 0);
 
     return 0;
 }
